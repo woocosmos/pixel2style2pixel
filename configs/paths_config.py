@@ -21,7 +21,7 @@ model_paths = {
 	'circular_face': './pretrained_models/CurricularFace_Backbone.pth',
 	'mtcnn_pnet': './pretrained_models/pnet.npy',
 	'mtcnn_rnet': './pretrained_models/rnet.npy',
-	'mtcnn_onet': './pretrained_models/onet.npy',
+	'mtcnn_onet': './pretrained_models/onet.npy', 
 	# 'shape_predictor': 'shape_predictor_68_face_landmarks.dat',
 	# 'moco': '/content/drive/MyDrive/stylegan_exp01/try02/pretrained_models/moco_v2_800ep_pretrain.pt',
   
