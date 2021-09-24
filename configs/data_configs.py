@@ -38,4 +38,11 @@ DATASETS = {
 		'test_source_root': dataset_paths['celeba_test'],
 		'test_target_root': dataset_paths['celeba_test'],
 	},
+	'sketch_to_zookiz': {
+		'transforms': transforms_config.ZookizTransforms,
+		'train_source_root': dataset_paths['zookiz_sketch_train'],
+		'train_target_root': dataset_paths['zookiz_train'],
+		'test_source_root': dataset_paths['zookiz_test_sktech'],
+		'test_target_root': dataset_paths['zookiz_test'],
+	}
 }
