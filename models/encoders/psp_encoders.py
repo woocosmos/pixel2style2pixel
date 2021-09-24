@@ -35,7 +35,7 @@ class GradualStyleBlock(Module):
 class GradualStyleEncoder(Module):
     def __init__(self, num_layers, mode='ir', opts=None):
         super(GradualStyleEncoder, self).__init__()
-        assert num_layers in [50, 100, 152], 'num_layers should be 50,100, or 152'
+        assert num_layers in [50, 100, 152], 'num_layers should be 50, 100, or 152'
         assert mode in ['ir', 'ir_se'], 'mode should be ir or ir_se'
         blocks = get_blocks(num_layers)
         if mode == 'ir':
@@ -54,7 +54,7 @@ class GradualStyleEncoder(Module):
         self.body = Sequential(*modules)
 
         self.styles = nn.ModuleList()
-        self.style_count = opts.n_styles
+        self.style_count = 18
         self.coarse_ind = 3
         self.middle_ind = 7
         for i in range(self.style_count):
@@ -160,7 +160,6 @@ class BackboneEncoderUsingLastLayerIntoWPlus(Module):
             unit_module = bottleneck_IR
         elif mode == 'ir_se':
             unit_module = bottleneck_IR_SE
-        self.n_styles = opts.n_styles
         self.input_layer = Sequential(Conv2d(opts.input_nc, 64, (3, 3), 1, 1, bias=False),
                                       BatchNorm2d(64),
                                       PReLU(64))
@@ -168,7 +167,7 @@ class BackboneEncoderUsingLastLayerIntoWPlus(Module):
                                          torch.nn.AdaptiveAvgPool2d((7, 7)),
                                          Flatten(),
                                          Linear(512 * 7 * 7, 512))
-        self.linear = EqualLinear(512, 512 * self.n_styles, lr_mul=1)
+        self.linear = EqualLinear(512, 512 * 18, lr_mul=1)
         modules = []
         for block in blocks:
             for bottleneck in block:
@@ -182,5 +181,5 @@ class BackboneEncoderUsingLastLayerIntoWPlus(Module):
         x = self.body(x)
         x = self.output_layer_2(x)
         x = self.linear(x)
-        x = x.view(-1, self.n_styles, 512)
+        x = x.view(-1, 18, 512)
         return x

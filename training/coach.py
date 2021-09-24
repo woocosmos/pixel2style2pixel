@@ -105,23 +105,26 @@ class Coach:
 					self.wb_logger.log_images_to_wandb(x, y, y_hat, id_logs, prefix="train", step=self.global_step, opts=self.opts)
 
 				# Validation related
+        ##### 저장 타이밍 직접 지정
 				val_loss_dict = None
-				if self.global_step % self.opts.val_interval == 0 or self.global_step == self.opts.max_steps:
+				if self.global_step % 1000 == 0 or self.global_step == self.opts.max_steps:
 					val_loss_dict = self.validate()
 					if val_loss_dict and (self.best_val_loss is None or val_loss_dict['loss'] < self.best_val_loss):
 						self.best_val_loss = val_loss_dict['loss']
 						self.checkpoint_me(val_loss_dict, is_best=True)
 
-				if self.global_step % self.opts.save_interval == 0 or self.global_step == self.opts.max_steps:
+				if self.global_step % 1000 == 0 or self.global_step == self.opts.max_steps:
 					if val_loss_dict is not None:
 						self.checkpoint_me(val_loss_dict, is_best=False)
+						print('checkpoint saved')
 					else:
 						self.checkpoint_me(loss_dict, is_best=False)
-
+						print('checkpoint saved')
+        
 				if self.global_step == self.opts.max_steps:
 					print('OMG, finished training!')
 					break
-
+					
 				self.global_step += 1
 
 	def validate(self):
@@ -163,12 +166,12 @@ class Coach:
 		checkpoint_path = os.path.join(self.checkpoint_dir, save_name)
 		torch.save(save_dict, checkpoint_path)
 		with open(os.path.join(self.checkpoint_dir, 'timestamp.txt'), 'a') as f:
-			if is_best:
-				f.write(f'**Best**: Step - {self.global_step}, Loss - {self.best_val_loss} \n{loss_dict}\n')
-				if self.opts.use_wandb:
-					self.wb_logger.log_best_model()
-			else:
-				f.write(f'Step - {self.global_step}, \n{loss_dict}\n')
+				if is_best:
+						f.write(f'**Best**: Step - {self.global_step}, Loss - {self.best_val_loss} \n{loss_dict}\n')
+						if self.opts.use_wandb:
+								self.wb_logger.log_best_model()
+				else:
+						f.write(f'Step - {self.global_step}, \n{loss_dict}\n')
 
 	def configure_optimizers(self):
 		params = list(self.net.encoder.parameters())
